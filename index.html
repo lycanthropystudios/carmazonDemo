@@ -1,572 +1,101 @@
+<!---
+preview: default
+--->
 <!--
   ## Introduction
-
-This is a sample template for implementing live blogs in AMP.
---><!-- -->
+  The [`amp-live-list`](/content/amp-dev/documentation/components/reference/amp-live-list-v0.1.md) component adds support for publishing live updates to AMP pages as new content becomes available in the source document. This works great for implementing live blogs. Find an example of a live blog [here](/samples_templates/live_blog).
+  In other words, the AMP runtime will poll the server for updates to the origin document, fetching itself. The server can return the entire AMP page [or parts of it](https://github.com/ampproject/amphtml/blob/master/extensions/amp-live-list/amp-live-list-server-side-filtering.md), and the runtime updates the page in-place seamlessly.
+-->
+<!-- -->
 <!doctype html>
 <html ⚡>
 <head>
-<meta charset="utf-8">
-  <title>Live Blog</title>
-      <script async src="https://cdn.ampproject.org/v0.js"></script>
-    <!-- ## Setup -->
-    <!-- Import `amp-social-share` for adding share buttons-->
-    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
-   <!-- Import `amp-live-list` for implementing a live blog. -->
-    <script async custom-element="amp-live-list" src="https://cdn.ampproject.org/v0/amp-live-list-0.1.js"></script>
-    <link rel="canonical" href="https://amp.dev/documentation/examples/news-publishing/live_blog/index.html">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-      <!-- ## Metadata -->
-      <!-- Live blog updates can be represented in Google Search results as carousel items of the blog page. [Learn more](https://developers.google.com/search/pilot/open/live-blogs#properties). -->
-      <script type="application/ld+json">
-        {
-          "@context": "http://schema.org",
-          "@type": "LiveBlogPosting",
-          "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/",
-          "articleBody": "This is the initial text in the blog post",
-          "datePublished": "2016-09-08T23:04:28.24337",
-          "about": {
-            "@type": "Event",
-            "description": "This is my great live blog sample",
-            "startDate": "2016-07-23T13:00:00-07:00",
-            "endDate": "2016-07-23T15:00:00-07:00",
-            "name": "An AMP Live Blog",
-            "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/",
-            "location": {
-              "@type": "EventVenue",
-              "name": "The Venue Name",
-              "address" : {
-                "@type": "PostalAddress",
-                "streetAddress": "701 Mission St",
-                "addressLocality": "San Francisco",
-                "addressRegion": "CA",
-                "postalCode": "94103",
-                "addressCountry": "US"
-              }
-            }
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "Google",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "/static/samples/img/favicon.png",
-              "width": "512",
-              "height": "512"
-            }
-          },
-          "author": {
-            "@type": "Person",
-            "sameAs": "https://github.com/kul3r4",
-            "name": "Chiara Chiappini"
-          },
-          "image": {
-            "@type": "ImageObject",
-            "url": "/static/samples/img/abe_preview.png",
-            "height": "1532",
-            "width": "2046"
-          },
-          "coverageStartTime": "2016-07-23T11:30:00-07:00",
-          "coverageEndTime": "2016-07-23T16:00:00-07:00",
-          "headline": "An AMP Live Blog",
-          "description": "A Live Blog implementation with AMP",
-          "liveBlogUpdate": "{
-        "@type": "BlogPosting",
-        "headline": "Green landscape",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post1",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_green_1280x853.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Mountains",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post2",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_mountains_1280x657.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Road leading to a lake",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post3",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_lake_1280x857.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Forested hills",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post4",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_trees_1280x960.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Scattered houses",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post5",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_village_1280x853.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Canyon",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post6",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_canyon_1280x1700.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Desert",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post7",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_desert_1280x853.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Houses",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post8",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_houses_1280x803.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Blue sea",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post9",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_sea_1280x848.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }{
-        "@type": "BlogPosting",
-        "headline": "Sailing ship",
-        "url": "https://amp.dev/documentation/examples/news-publishing/live_blog/#post10",
-        "datePublished": 1591106792832,
-        "author": {
-          "@type": "Person",
-          "sameAs": "https://github.com/kul3r4",
-          "name": "Chiara Chiappini"
-        },
-        "articleBody": "Text",
-        "publisher": {
-          "@type": "Organization",
-          "name": "amp.dev",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://amp.dev/img/favicon.png",
-            "width": "512",
-            "height": "512"
-          }
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://amp.dev/static/samples/img/landscape_ship_1280x853.jpg",
-          "width": "853",
-          "height": "1280"
-        }
-      }"
-        }
-      </script>
-      <style amp-custom>
-        :root {
-        --color-primary: #005AF0;
-        --color-secondary: #00DCC0;
-        --color-text-light: #fff;
-        --color-text-dark: #000;
+  <meta charset="utf-8">
+  <title>amp-live-list</title>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <!-- ## Setup -->
+  <!--
+  Import the `amp-live-list` component in the header.
+  -->
+  <script async custom-element="amp-live-list" src="https://cdn.ampproject.org/v0/amp-live-list-0.1.js"></script>
+  <link rel="canonical" href="<% canonical %>">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
 
-        --space-1: .5rem;  /* 8px */
-        --space-2: 1rem;   /* 16px */
-        }
-        .carousel .slide > amp-img > img {
-          object-fit: contain;
-        }
-        .amp-social-share {
-          margin-right: var(--space-1);
-        }
-        .heading {
-          padding: var(--space-2);
-        }
-        .heading > #summary {
-          font-weight: 500;
-        }
-        .heading > small {
-          color: var(--color-primary);
-        }
-        .date {
-          color: var(--color-primary);
-          font-size: 12px;
-        }
-        .blog {
-          padding: 0;
-          min-width: 70%;
-          background: var(--color-text-light);
-        }
-        .blog p {
-          margin: 0 var(--space-2);
-        }
-        .blog .text {
-          color: var(--color-text-dark);
-          padding-top: 0;
-        }
-        .blog .title {
-          color: var(--color-text-light);
-          position: relative;
-          top: -48px;
-          margin: 0 var(--space-2);
-          height: 0;
-          padding-bottom: var(--space-2);
-        }
-        .blog .social-share {
-          line-height:36px;
-          display: flex;
-          padding-bottom: var(--space-2);
-          padding-top: var(--space-2);
-        }
-        #live-list-update-button {
-          position: fixed;
-          top: var(--space-1);
-          right: var(--space-2);
-        }
-        @media (max-width: 600px) {
-          #live-list-update-button {
-            top: 60px;
-          }
-        }
-        .pagination {
-          display: inline-block;
-          padding: 0;
-        }
-        .live-list [pagination] nav {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .pagination li {
-          display: inline;
-          padding: var(--space-1);
-          list-style-type: none;
-        }
-      </style>
-  </head>
-  <body>
-    <section class="heading">
-      <h1>An AMP Live Blog</h1>
-      <p><small class="date">Fri July 22 2016</small></p>
-      <p><small>by Chiara Chiappini</small></p>
-      <p id="summary">This is a sample article demonstrating how to write a live blog in AMP. It demonstrates the usage of amp-live-list component which allows to create live blogs.</p>
-    </section>
-    <!-- ## Blog Posts -->
-    <!-- Use amp-live-list to implement a live blog. The amp-live-list component regularly polls the host document for updated content and updates the end user's browser as new items become available. This means that every time a new post needs to be added, the host document should be updated by the CMS to include the update both the body and the metadata section. Find an amp-live-list example [here](/documentation/examples/components/amp-live-list/).
+  <style amp-custom>
+    :root {
+      --space-2: 1rem;  /* 8px */
+			--color-primary: #005AF0;
+    }
+    amp-live-list [items] {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .blog-item {
+      width: 300px;
+      margin-bottom: var(--space-2);
+    }
+    .blog-item > div {
+      padding: var(--space-2);
+    }
+    .time {
+      font-size: var(--space-2);
+      margin: var(--space-2);
+    }
+    time {
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- ## Update after user interaction: live blog -->
 
-    Long blogs could use pagination to improve performance by limiting the number of blog items to be displayed on a page. To implement pagination, amp-live-list allows to add the `<div pagination></div>` element, to then insert any markup needed for pagination, for example the page number, a link to the next and previous page. -->
-    <amp-live-list class="live-list"
-  layout="container"
-  data-poll-interval="15000"
-  data-max-items-per-page="5"
-  id="amp-live-list-insert-blog">
-
-  <button id="live-list-update-button"
-    update
-    on="tap:amp-live-list-insert-blog.update">You have updates</button>
-  <div items>
-    
-    <div id="1"
-      data-sort-time="1591120934795">
-      <div class="blog">
-        <amp-img src="/static/samples/img/landscape_green_1280x853.jpg"
-          layout="responsive"
-          width="1280"
-          height="853">
-        </amp-img>
-        <h4 class="title">Green landscape</h4>
-        <p class="date">6/2/2020</p>
-        <p class="text">A green landscape with trees.</p>
-        <p class="social-share">
-          <amp-social-share type="twitter"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#1"></amp-social-share>
-          <amp-social-share type="facebook"
-            width="45"
-            height="33"
-            data-attribution="254325784911610"
-            data-param-url="AMPDOC_URL#1"></amp-social-share>
-          <amp-social-share type="gplus"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#1"></amp-social-share>
-          <amp-social-share type="email"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#1"></amp-social-share>
-          <amp-social-share type="pinterest"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#1"></amp-social-share>
-        </p>
-      </div>
+  <!--
+    Use the `data-poll-interval` attribute to specify how frequently the `amp-live-list` component will poll new data. The minimum interval is 15 seconds.
+    Use `data-max-items-per-page` to specify the maximum number displayed on the page.
+    For an extensive explanation of all the attributes, refer to [amp-live-list](/content/amp-dev/documentation/components/reference/amp-live-list-v0.1.md).
+    Use `on="tap:my-live-list.update"` to load the latest changes from the server.
+    A button will appear when the AMP runtime discovers new document changes. Note that the button has to be defined as a direct child of `amp-live-list` .
+    An `amp-live-list` must contain a list of items below `<div items>`. Each item has a specific id and the `amp-live-list` will look for items with new id.
+    Important: By clicking on the button "You have updates", new content is displayed on the demo column (the one on the right if the demo is accessed by desktop). The code column (the one in the center if the demo is accessed by desktop) does not update itself, but if you want to see all the items on the page, reload the page.
+    -->
+  <amp-live-list
+      layout="container"
+      data-poll-interval="15000"
+      data-max-items-per-page="5"
+      id="amp-live-list-insert-blog">
+    <button update on="tap:amp-live-list-insert-blog.update">You have updates</button>
+    <div items>
+      [% for item in  blogItems %]
+          <div id="[= item.id =]" data-sort-time="[= item.timestamp =]" class="blog-item">
+              <amp-img src="[= item.img =]"
+                  layout="responsive" width="1280" height="853">
+              </amp-img>
+              <div>[= item.text =]</div>
+          </div>
+        [% endfor %]
     </div>
-    
-    <div id="2"
-      data-sort-time="1591120934795">
-      <div class="blog">
-        <amp-img src="/static/samples/img/landscape_mountains_1280x657.jpg"
-          layout="responsive"
-          width="1280"
-          height="853">
-        </amp-img>
-        <h4 class="title">Mountains</h4>
-        <p class="date">6/2/2020</p>
-        <p class="text">Mountains reflecting on a lake.</p>
-        <p class="social-share">
-          <amp-social-share type="twitter"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#2"></amp-social-share>
-          <amp-social-share type="facebook"
-            width="45"
-            height="33"
-            data-attribution="254325784911610"
-            data-param-url="AMPDOC_URL#2"></amp-social-share>
-          <amp-social-share type="gplus"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#2"></amp-social-share>
-          <amp-social-share type="email"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#2"></amp-social-share>
-          <amp-social-share type="pinterest"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#2"></amp-social-share>
-        </p>
+  </amp-live-list>
+  <!--
+    Note: the contents of the `amp-live-list` are generated randomly (for easier and repeatable testing).
+    ## Automatic update
+    If you want to update existing list items without user interaction, you need to specify via the `data-update-time` attribute when the update has been performed.
+    The following example will display and automatically update the current time. This approach is great for displaying live scores or live market values.
+  -->
+    <amp-live-list
+        layout="container"
+        data-poll-interval="15000"
+      data-max-items-per-page="1"
+        id="amp-live-list-update">
+      <button update on="tap:amp-live-list-insert-blog.update">You have updates</button>
+      <div items>
+        <div id="time" data-sort-time="1234567" data-update-time="[= timestamp =]" class="time">
+          The time is: <time>[= time =]</time>
+        </div>
       </div>
-    </div>
-    
-    <div id="3"
-      data-sort-time="1591120934795">
-      <div class="blog">
-        <amp-img src="/static/samples/img/landscape_lake_1280x857.jpg"
-          layout="responsive"
-          width="1280"
-          height="853">
-        </amp-img>
-        <h4 class="title">Road leading to a lake</h4>
-        <p class="date">6/2/2020</p>
-        <p class="text">A road leading to a lake with mountains on the back.</p>
-        <p class="social-share">
-          <amp-social-share type="twitter"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#3"></amp-social-share>
-          <amp-social-share type="facebook"
-            width="45"
-            height="33"
-            data-attribution="254325784911610"
-            data-param-url="AMPDOC_URL#3"></amp-social-share>
-          <amp-social-share type="gplus"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#3"></amp-social-share>
-          <amp-social-share type="email"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#3"></amp-social-share>
-          <amp-social-share type="pinterest"
-            width="45"
-            height="33"
-            data-param-url="AMPDOC_URL#3"></amp-social-share>
-        </p>
-      </div>
-    </div>
-    
-  </div>
-  <div pagination>
-    <nav aria-label="amp live list pagination">
-      <ul class="pagination">
-        
-        <li>1</li>
-        
-      </ul>
-    </nav>
-  </div>
-</amp-live-list>
-</body></html>
+  </amp-live-list>
+</body>
+</html>
